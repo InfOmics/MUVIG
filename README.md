@@ -8,7 +8,7 @@ The data analyzed comes from the Parkinson’s Progression Marker Initiative (PP
 
 ## Contents
 
-The analysis was conducted 2 times. Ones including the Subjects Without Evidence of Dopamine Deficency(SWEDD) and the other considering only healthy controls and Parkinon's disease patients. 
+The analysis was conducted 2 times. Ones including the Subjects Without Evidence of Dopamine Deficency (SWEDD) and the other considering only healthy controls and Parkinon's disease patients. 
 
 ## Usage
 
@@ -18,11 +18,11 @@ The project was developed using python inside jupyter notebook. For the generati
 
 In order to run correctly the complete workflow you need to install the followin programs:
 
-### *PLINK*
+### **PLINK**
 
-PLINK is avaialble at [PLINK download](https://zzz.bwh.harvard.edu/plink/download.shtml).
+&ensp; PLINK is avaialble at [PLINK download](https://zzz.bwh.harvard.edu/plink/download.shtml).
 
-### The following *R packages*:
+### The following **R packages**:
 
 ```R
 BiocManager::install(c("magrittr","clusterProfiler","Homo.sapiens","AnnotationDbi","EnsDb.Hsapiens.v75","fgsea","BiocParallel"))
@@ -30,13 +30,13 @@ install.packages(c("qqman","RNOmni","edgeR","variancePartition","tidyverse","dev
 install_bitbucket("mdonohue/grace")
 require('gtools')
 ```
-### The following *Python modules*:
+### The following **Python modules**:
 
 ```bash
 pip install scipy.stats matplotlib_venn pandas matplotlib.pyplot seaborn math
 ```
 
-### The following *tools*:
+### The following **tools**:
 
 * **Tates**: avaiable at [Tates download](https://ctg.cncr.nl/software/tates)
 * **Grace**: avaiable at [Grace download](https://bitbucket.org/mdonohue/grace/src/master/)
