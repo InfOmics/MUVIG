@@ -20,7 +20,7 @@ In order to run correctly the complete workflow you need to install the followin
 
 ### **PLINK**
 
-&ensp; PLINK is avaialble at [PLINK download](https://zzz.bwh.harvard.edu/plink/download.shtml).
+PLINK is avaialble at [PLINK download](https://zzz.bwh.harvard.edu/plink/download.shtml).
 
 ### The following **R packages**:
 
