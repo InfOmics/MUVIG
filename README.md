@@ -63,7 +63,7 @@ You can contact directly the authors by their e-mail addresses.
 
 ## Authors and acknowledgment
 
-Guglielmo Cerri (@GuglielmoCerri - cerriguglielmo@gmail.com) created the workflow and Manuel Tognon(@ManuelTgn - manuel.tognon@univr.it) has contributed. 
+Guglielmo Cerri (@GuglielmoCerri - cerriguglielmo@gmail.com) and Manuel Tognon(@ManuelTgn - manuel.tognon@univr.it) created the workflow. 
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
