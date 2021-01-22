@@ -2,8 +2,6 @@
 
 Imaging genetics workflow to find Parkinson's Disease potential genetic biomarkers, combining genetics, transcriptomics and imaging data.
 
-![Alt text](Schema.pdf?raw=true "Optional Title")
-
 ## Overview
 
 The data analyzed comes from the Parkinson’s Progression Marker Initiative (PPMI: [link](https://www.ppmi-info.org)). It contains the most complete and comprehensive collection of PD-related data. PPMI aims to identify new potential biomarkers of progression for PD through longitudinal studies, which use and correlate data from different sources, in order to enhance the development of new therapies and treatments. PPMI is sponsored by the Michael J. Fox Foundation for Parkinson’s Research, and gathers a huge amount of imaging, genetic and neurobehavioral data collected by many research centers in North America, Europe, Israel and Australia. Among the available genetic data in PPMI, genotyping and transcriptomic data provide a comprehensive perspective of which roles play in PD genetic variation, genes expression and gene-gene interactions.
