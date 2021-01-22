@@ -28,7 +28,6 @@ PLINK is avaialble at [PLINK download](https://zzz.bwh.harvard.edu/plink/downloa
 BiocManager::install(c("magrittr","clusterProfiler","Homo.sapiens","AnnotationDbi","EnsDb.Hsapiens.v75","fgsea","BiocParallel"))
 install.packages(c("qqman","RNOmni","edgeR","variancePartition","tidyverse","devtools","ggplot2","MKmisc"))
 install_bitbucket("mdonohue/grace")
-require('gtools')
 ```
 ### The following **Python modules**:
 
