@@ -1,6 +1,6 @@
 # ImaginGeneticsPD
 
-Imaging genetics workflow to find Parkinson's Disease potential genetic biomarkers, combining genetics, transcriptomics and imaging data.
+Imaging genetics workflow to find Parkinson's Disease potential genetic biomarkers, combining genetics, transcriptomics and imaging data. Above is presented the workflow of this project.
 
 ![Image](docs/Workflow.png)
 
