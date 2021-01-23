@@ -10,7 +10,12 @@ The data analyzed comes from the Parkinson’s Progression Marker Initiative (PP
 
 ## Contents
 
-The analysis was conducted 2 times. Ones including the Subjects Without Evidence of Dopamine Deficency (SWEDD) and the other considering only healthy controls and Parkinon's disease patients. 
+The content of this repository reflects the workflow. The files are dividev into 4 main folders:
+
+* Preprocessing
+* Individual View
+* Integrated View
+* Functional Interpretation
 
 ## Usage
 
@@ -22,7 +27,7 @@ In order to run correctly the complete workflow you need to install the followin
 
 ### **PLINK**
 
-PLINK is avaialble at [PLINK download](https://zzz.bwh.harvard.edu/plink/download.shtml).
+PLINK is avaialble at [PLINK download](https://zzz.bwh.harvard.edu/plink/download.shtml). Are avaiable ZIP files containing binaries compilied on various platforms as well as the C/C++ source code. Linux/Unix users should download the source code and compile. The downloads also contain a version of gPLINK, an (optional) GUI for PLINK. PLINK is available as a Debian package
 
 ### The following **R packages**:
 
@@ -64,7 +69,7 @@ You can contact directly the authors by their e-mail addresses.
 
 ## Authors and acknowledgment
 
-Guglielmo Cerri (@GuglielmoCerri - cerriguglielmo@gmail.com) and Manuel Tognon(@ManuelTgn - manuel.tognon@univr.it) created the workflow. 
+Guglielmo Cerri (cerriguglielmo@gmail.com) and Manuel Tognon(manuel.tognon@univr.it) created the workflow. 
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
