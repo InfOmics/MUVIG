@@ -2,7 +2,7 @@
 
 Imaging genetics workflow to find Parkinson's Disease potential genetic biomarkers, combining genetics, transcriptomics and imaging data.
 
-![Image](docs/Workflow.pdf)
+![Image](docs/Workflow.png)
 
 ## Overview
 
