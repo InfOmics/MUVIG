@@ -99,6 +99,7 @@ eu.mri.baseline <- mri.baseline[mri.baseline$PATNO %in% eu.pats$V1,]
 if (!are_equal(nrow(eu.pats), nrow(eu.mri.baseline)))
     stop("wrong number of MRI features retrieved")
 
+
 # load the enrolment cathegory information
 pat.info <- read.csv(
   paste(data.dir, "patient_docs/Patient_Status.csv", sep = "")
@@ -107,6 +108,14 @@ eu.pat.info <- pat.info[pat.info$PATNO %in% eu.pats$V1,]
 if (!are_equal(nrow(eu.pats), nrow(eu.mri.baseline)))
   stop("wrong number of patients retrieved")
 eu.mri.baseline$ENROLL_CAT <- ifelse(eu.pat.info$ENROLL_CAT == "PD", 1, 2)
+
+# store the baseline MRI data for subjects with european ancestry
+write.csv(
+  eu.mri.baseline[,c(1,632:ncol(eu.mri.baseline))],
+  file = paste(data.dir, "imaging/MRI/mriFeatures_eu_woswedd.csv", sep = ""),
+  quote = FALSE,
+  row.names = FALSE
+)
 
 # initialize result report table
 features <- data.frame(
@@ -130,4 +139,9 @@ write.csv(
   quote = FALSE,
   row.names = FALSE
 )
+
+
+
+
+
 
