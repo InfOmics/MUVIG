@@ -81,7 +81,7 @@ data.dir <- "~/Desktop/IGproject/IGPD/data/"  # modify accordingly
 
 # get IDs of subjects with European ancestry retrieved during the QC step
 eu.pats <- read.csv(
-  paste(data.dir, "genotyping/PPMI_eu_woswedd.fam", sep = ""),
+  paste(data.dir, "genotyping/PPMI_eu_woswedd_ds.fam", sep = ""),
   header = FALSE,
   sep = " "
 )[,1:2]
@@ -107,7 +107,7 @@ pat.info <- read.csv(
 eu.pat.info <- pat.info[pat.info$PATNO %in% eu.pats$V1,]
 if (!are_equal(nrow(eu.pats), nrow(eu.mri.baseline)))
   stop("wrong number of patients retrieved")
-eu.mri.baseline$ENROLL_CAT <- ifelse(eu.pat.info$ENROLL_CAT == "PD", 1, 2)
+eu.mri.baseline$ENROLL_CAT <- ifelse(eu.pat.info$ENROLL_CAT == "PD", 1, 0)
 
 # store the baseline MRI data for subjects with european ancestry
 write.csv(
@@ -139,9 +139,4 @@ write.csv(
   quote = FALSE,
   row.names = FALSE
 )
-
-
-
-
-
 
