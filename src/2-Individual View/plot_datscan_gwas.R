@@ -46,7 +46,7 @@ for (pheno in phenotypes){
   )
   
   out.fn <- paste(paste(results.dir, pheno, sep = ""), ".png", sep = "")
-  png(out.fn, width = 24, height = 16, units = "in", res = 275)  # 1024x768, 300 dpi PNG images
+  png(out.fn, width = 24, height = 16, units = "in", res = 275) 
   
   par(mfrow=c(2,1)) 
   
