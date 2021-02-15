@@ -108,7 +108,6 @@ eu.pat.info <- pat.info[pat.info$PATNO %in% eu.pats$V1,]
 if (!are_equal(nrow(eu.pats), nrow(eu.mri.baseline)))
   stop("wrong number of patients retrieved")
 eu.mri.baseline$ENROLL_CAT <- ifelse(eu.pat.info$ENROLL_CAT == "PD", 2, 1)
-eu.mri.baseline$eTIV
 
 # store the baseline MRI data for subjects with european ancestry
 write.csv(
