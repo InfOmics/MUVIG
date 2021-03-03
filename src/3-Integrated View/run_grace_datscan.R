@@ -1,0 +1,128 @@
+########################################################################
+#
+# run_grace.R
+#
+# The following R script computes growth curve models fitting DATScan 
+# measure evolution among the European subjects of PPMI.
+#
+# The models are computed using GRACE tool. The growth curve are built
+# to fit the DATScan measure changes as functions of subjects age.
+# 
+# After GRACE computation we have a single measure describing the 
+# differences in DATScan uptake values among the PPMI subjects.
+#
+# This is the fundamental step of the Integrated View phase, since 
+# during this step we merge different (but closely related) phenotypic
+# values to a single unifying measure (gamma0).
+#
+# The new values are used as single phenotypic information to use 
+# during GWAS computation
+#
+########################################################################
+
+
+# R packages required to run the script:
+#   - devtools
+#   - grace
+#   - fda
+#   - mvtnorm
+#   - tidyverse
+if(!require("devtools", character.only = TRUE))
+{
+  install.packages("devtools")
+  if(!require("devtools", character.only = TRUE))
+  {
+    stop("devtools package not found")
+  }
+}
+
+if(!require("grace", character.only = TRUE))
+{
+  library(devtools)
+  install_bitbucket("grace", "mdonohue")
+  if(!require("grace", character.only = TRUE))
+  {
+    stop("grace package not found")
+  }
+}
+
+if(!require("fda", character.only = TRUE))
+{
+  install.packages("fda")
+  if(!require("fda", character.only = TRUE))
+  {
+    stop("fda package not found")
+  }
+}
+
+if(!require("mvtnorm", character.only = ))
+{
+  install.packages("mvtnorm")
+  if(!require("mvtnorm", character.only = TRUE))
+  {
+    stop("mvtnorm package not found")
+  }
+}
+
+if(!require("tidyverse", character.only = TRUE))
+{ 
+  install.packages("tidyverse")
+  if(!require("tidyverse", character.only = TRUE))
+  {
+    stop("tidyverse package not found")
+  }
+}
+
+# load the required packages
+library(devtools)
+library(grace) 
+library(fda) 
+library(mvtnorm) 
+library(tidyverse)
+library(ggplot2) 
+
+
+options(stringsAsFactors = FALSE) 
+
+# load DATScan measures
+datscan.dir <- "../../data/imaging/DaTSCAN/"
+datscan <- read.csv(paste(datscan.dir, "DATScan_Analysis_eu_fv_norm.csv", sep = ""))
+datscan <- datscan[, c(1,4:ncol(datscan))]
+
+# load phenotype information (computed during prev step)
+pheno.fn <- "../../data/genotyping/phenotype_datscan.txt"
+pheno <- read.csv(pheno.fn, sep = " ")
+
+# load covariate information (computed during prev step)
+covar.fn = "../../data/genotyping/covariate_datscan.txt"
+covar <- read.csv(covar.fn, sep = "\t")
+
+# create df for grace run
+features <- colnames(datscan)[2:length(colnames(datscan))]
+for (f in features)
+{
+  datscan[f] <- (datscan[[f]] - min(datscan[[f]],na.rm=T))/sd(datscan[[f]],na.rm = T)
+}
+grace.df <- data.frame(
+  id = rep(datscan$PATNO, each = 4),  # 4 features
+  argvals = rep(covar$AGE, each = 4),
+  group = as.factor(rep(pheno$ENROLL_CAT, each = 4)),
+  Y = as.numeric(as.list(t(datscan[, 2:ncol(datscan)]))),
+  outcome = rep(features, length(datscan$PATNO))
+)
+
+# run grace
+grace.fits <- grace(id = grace.df$id,
+                    argvals = grace.df$argvals,
+                    y = grace.df$Y,
+                    outcome = grace.df$outcome,
+                    group = grace.df$group,
+                    plots = FALSE)
+
+# store grace results
+for (f in features)
+{
+  out.name <- paste(datscan.dir, f, "_grace.csv", sep = " ")
+  write.csv(x = grace.fits$fits[[f]]$subset, file = out.name, quote = FALSE, row.names = FALSE) 
+}
+
