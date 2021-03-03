@@ -1,6 +1,6 @@
 ########################################################################
 #
-# run_grace_datscan.R
+# run_grace_mri.R
 #
 # The following R script computes growth curve models fitting DATScan 
 # measure evolution among the European subjects of PPMI.
@@ -85,30 +85,31 @@ library(ggplot2)
 options(stringsAsFactors = FALSE) 
 
 # load DATScan measures
-datscan.dir <- "../../data/imaging/DaTSCAN/"
-datscan <- read.csv(paste(datscan.dir, "DATScan_Analysis_eu_fv_norm.csv", sep = ""))
-datscan <- datscan[, c(1,4:ncol(datscan))]
+mri.dir <- "../../data/imaging/MRI/"
+mri <- read.csv(paste(mri.dir, "MRIFeatures_eu_woswedd.csv", sep = ""))
+mri <- mri[, c(1,3:267)]
+mri <- mri[complete.cases(mri),]
 
 # load phenotype information (computed during prev step)
-pheno.fn <- "../../data/genotyping/phenotype_datscan.txt"
+pheno.fn <- "../../data/genotyping/phenotype_mri.txt"
 pheno <- read.csv(pheno.fn, sep = " ")
 
 # load covariate information (computed during prev step)
-covar.fn = "../../data/genotyping/covariate_datscan.txt"
+covar.fn = "../../data/genotyping/covariate_mri.txt"
 covar <- read.csv(covar.fn, sep = "\t")
 
 # create df for grace run
-features <- colnames(datscan)[2:length(colnames(datscan))]
-for (f in features)
-{
-  datscan[f] <- (datscan[[f]] - min(datscan[[f]], na.rm=T)) / sd(datscan[[f]], na.rm = T)
-}
+features <- colnames(mri)[2:length(colnames(mri))]
+# for (f in features)
+# {
+#   mri[f] <- (mri[[f]] - min(mri[[f]], na.rm = T)) / sd(mri[[f]], na.rm = T) 
+# }
 grace.df <- data.frame(
-  id = rep(datscan$PATNO, each = 4),  # 4 features
-  argvals = rep(covar$AGE, each = 4),
-  group = as.factor(rep(pheno$ENROLL_CAT, each = 4)),
-  Y = as.numeric(as.list(t(datscan[, 2:ncol(datscan)]))),
-  outcome = rep(features, length(datscan$PATNO))
+  id = rep(mri$PATNO, each = 265),  # 265 features
+  argvals = rep(covar[covar$IID %in% mri$PATNO,]$AGE, each = 265),
+  group = as.factor(rep(pheno[pheno$IID %in% mri$PATNO,]$ENROLL_CAT, each = 265)),
+  Y = as.numeric(as.list(t(mri[, 2:ncol(mri)]))),
+  outcome = rep(features, length(mri$PATNO))
 )
 
 # run grace
@@ -117,7 +118,7 @@ grace.fits <- grace(id = grace.df$id,
                     y = grace.df$Y,
                     outcome = grace.df$outcome,
                     group = grace.df$group,
-                    plots = FALSE)
+                    plots = T)
 
 # store grace results
 for (f in features)
