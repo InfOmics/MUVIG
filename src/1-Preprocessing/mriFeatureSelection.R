@@ -67,7 +67,7 @@ compute.lm <- function(feature)
         sep = ""
       )
     ),
-    data = eu.mri.baseline
+    data = mri.foi.bl
   )
   
   p <- summary(fit)$coeff["ENROLL_CAT",4]
@@ -77,58 +77,43 @@ compute.lm <- function(feature)
 
 
 # retrieve data directory path
-data.dir <- "~/Desktop/IGproject/IGPD/data/"  # modify accordingly
-
-# get IDs of subjects with European ancestry retrieved during the QC step
-eu.pats <- read.csv(
-  paste(data.dir, "genotyping/PPMI_eu_woswedd_ds.fam", sep = ""),
-  header = FALSE,
-  sep = " "
-)[,1:2]
+data.dir <- "../../data/"  # modify accordingly
 
 # retrieve MRI imaging features
-mri.feat <- read.csv(
-  paste(data.dir, "imaging/MRI/mriFeatures.csv", sep = ""),
-)[-1] # remove first column --> unuseful index
-
-# get only data retrieved during the first visit (baseline)
-mri.baseline <- mri.feat[mri.feat$EVENT_ID == "BL",] %>% distinct(PATNO, .keep_all = TRUE)
-
-# get only data related to individuals with european ancestry
-eu.mri.baseline <- mri.baseline[mri.baseline$PATNO %in% eu.pats$V1,]
-if (!are_equal(nrow(eu.pats), nrow(eu.mri.baseline)))
-    stop("wrong number of MRI features retrieved")
-
+mri.foi.bl <- read.csv(
+  paste(data.dir, "imaging/MRI/mriFeatures_bl.csv", sep = "")
+)
 
 # load the enrolment cathegory information
 pat.info <- read.csv(
   paste(data.dir, "patient_docs/Patient_Status.csv", sep = "")
 ) 
-eu.pat.info <- pat.info[pat.info$PATNO %in% eu.pats$V1,]
-if (!are_equal(nrow(eu.pats), nrow(eu.mri.baseline)))
-  stop("wrong number of patients retrieved")
-eu.mri.baseline$ENROLL_CAT <- ifelse(eu.pat.info$ENROLL_CAT == "PD", 2, 1)
 
-# store the baseline MRI data for subjects with european ancestry
-write.csv(
-  eu.mri.baseline[,c(1, 630, 632:ncol(eu.mri.baseline))],  # 1 == PATNO, 630 == eTIV, 632: == MRI features
-  file = paste(data.dir, "imaging/MRI/mriFeatures_eu_woswedd.csv", sep = ""),
+eu.pat.info <- pat.info[pat.info$PATNO %in% mri.foi.bl$PATNO,]
+if (!are_equal(nrow(eu.pat.info), nrow(mri.foi.bl))){
+  stop("wrong number of patients retrieved")}
+mri.foi.bl$ENROLL_CAT <- ifelse(eu.pat.info$ENROLL_CAT == "PD", 2, 1)
+
+write.table(
+  mri.foi.bl[,-1],
+  file = paste(data.dir, "imaging/MRI/mriFeatures_eu_noswedd.csv", sep = ""),
   quote = FALSE,
-  row.names = FALSE
+  row.names = FALSE,
+  sep="\t"
 )
 
 # initialize result report table
 features <- data.frame(
-  Name = colnames(eu.mri.baseline)[632:(ncol(eu.mri.baseline) - 3)],
-  p = rep(-1, length(colnames(eu.mri.baseline)[632:(ncol(eu.mri.baseline) - 3)])),
-  p.adj = rep(-1, length(colnames(eu.mri.baseline)[632:(ncol(eu.mri.baseline) - 3)]))
-  )
+  Name = colnames(mri.foi.bl)[631:(ncol(mri.foi.bl) - 4)],
+  p = rep(-1, length(colnames(mri.foi.bl)[631:(ncol(mri.foi.bl) - 4)])),
+  p.adj = rep(-1, length(colnames(mri.foi.bl)[631:(ncol(mri.foi.bl) - 4)]))
+)
 
 # compute lm p-values
 p <- sapply(as.list(as.character(features$Name)), compute.lm)
 
 features$p <- p
-features <- features[!is.na(features$p),]
+features   <- features[!is.na(features$p),]
 features$p.adj <- p.adjust(features$p, method = "BH")
 features <- features[order(features$p.adj),]
 
@@ -139,4 +124,3 @@ write.csv(
   quote = FALSE,
   row.names = FALSE
 )
-

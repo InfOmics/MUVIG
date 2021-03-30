@@ -24,6 +24,7 @@ if(!require("qqman", character.only = TRUE))
 
 # load required packages
 suppressPackageStartupMessages(library(qqman))
+source("Manhattan_plot.R")
 
 genotyping.dir <- "../../data/genotyping/"
 tates.dir <- paste(genotyping.dir, "tates_mri_wd/", sep = "")
@@ -36,31 +37,27 @@ snp.pheno.st.ass = read.table(
 colnames(snp.pheno.st.ass) <- c("CHR", "SNP", "PHENO", "P")
 snp.pheno.st.ass = cbind(
   snp.pheno.st.ass, data.frame(
-    BP = read.csv(
+    BP = read.table(
       paste(
         paste(
-          paste(genotyping.dir, "indview_mri_", sep = ""), 
+          paste(genotyping.dir, "Individual_View_MRI/indview_mri.", sep = ""), 
           "rh_parahippocampal_volume", sep = ""
         ), 
-        ".csv", sep = ""
-      )
+        ".assoc.linear", sep = ""
+      ), header = T
     )$BP
   )
 )
 
-out.fn <- paste(paste(results.dir, "tates_st_correction", sep = ""), ".png", sep = "")
-png(out.fn, width = 24, height = 16, units = "in", res = 275) 
-
-par(mfrow=c(2,1)) 
+out.fn    <- paste(paste(results.dir, "tates_st_correction_Manhattan", sep = ""), ".png", sep = "")
+out.fn.qq <- paste(paste(results.dir, "tates_st_correction_QQ", sep = ""), ".png", sep = "")
 
 # manhanttan plot
-manhattan(
-  snp.pheno.st.ass, main = "TATES ST correction - Manhanttan plot", chr="CHR", bp="BP", p="P",
-  ylim = c(0, 8), col = c("blue4", "orange3"), annotatePval = 0.005
-)
+ManhattanGenerator(snp.pheno.st.ass, 
+                   out.fn, 
+                   "TATES ST correction")
 
 # qq plot
+png(out.fn.qq, width = 24, height = 16, units = "in", res = 275)
 qq(snp.pheno.st.ass$P, main = "TATES ST correction - QQ plot", col = "blue4")
-
-dev.off()  # close ostream
-
+dev.off()  # close ostream  

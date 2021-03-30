@@ -74,55 +74,62 @@ if(!require("tidyverse", character.only = TRUE))
 }
 
 # load the required packages
-library(devtools)
-library(grace) 
-library(fda) 
-library(mvtnorm) 
-library(tidyverse)
-library(ggplot2) 
-
+suppressPackageStartupMessages(library(devtools))
+suppressPackageStartupMessages(library(grace))
+suppressPackageStartupMessages(library(fda))
+suppressPackageStartupMessages(library(mvtnorm))
+suppressPackageStartupMessages(library(tidyverse))
 
 options(stringsAsFactors = FALSE) 
 
-# load DATScan measures
-datscan.dir <- "../../data/imaging/DaTSCAN/"
-datscan <- read.csv(paste(datscan.dir, "DATScan_Analysis_eu_fv_norm.csv", sep = ""))
-datscan <- datscan[, c(1,4:ncol(datscan))]
+genotyping.dir = "../../data/genotyping/"
+indview.dat    = paste0(genotyping.dir, "Individual_View_Datscan/")
+grace.dir      = "Integrated_View_Datscan"
+results.dir    = "../../results/"
+
+# create the folder that will contains the results
+dir.create(file.path(genotyping.dir, grace.dir), showWarnings = TRUE)
 
 # load phenotype information (computed during prev step)
-pheno.fn <- "../../data/genotyping/phenotype_datscan.txt"
-pheno <- read.csv(pheno.fn, sep = " ")
+pheno <- read.csv(paste0(indview.dat,"phenotype_datscan.txt"), sep = " ")
 
 # load covariate information (computed during prev step)
-covar.fn = "../../data/genotyping/covariate_datscan.txt"
-covar <- read.csv(covar.fn, sep = "\t")
+covar <- read.csv(paste0(indview.dat,"covariate_datscan.txt"), sep = " ")
 
 # create df for grace run
-features <- colnames(datscan)[2:length(colnames(datscan))]
-for (f in features)
-{
-  datscan[f] <- (datscan[[f]] - min(datscan[[f]], na.rm=T)) / sd(datscan[[f]], na.rm = T)
+features <- colnames(pheno)[4:length(colnames(pheno))]
+
+for (f in features){
+  pheno[f] <- (pheno[[f]] - min(pheno[[f]], na.rm=T)) / sd(pheno[[f]], na.rm = T)
 }
+times = length(features)
+
 grace.df <- data.frame(
-  id = rep(datscan$PATNO, each = 4),  # 4 features
-  argvals = rep(covar$AGE, each = 4),
-  group = as.factor(rep(pheno$ENROLL_CAT, each = 4)),
-  Y = as.numeric(as.list(t(datscan[, 2:ncol(datscan)]))),
-  outcome = rep(features, length(datscan$PATNO))
+  id = rep(pheno$FID, each = times),      # 4 features
+  argvals = rep(covar$Age, each = times),
+  group = as.factor(rep(pheno$ENROLL_CAT, each = times)),
+  Y = as.numeric(as.list(t(pheno[, features]))),
+  outcome = rep(features, length(pheno$FID))
 )
 
-# run grace
+# before run grace is suggested to move to another folder in order to store the resulting plot
+dir.create(file.path(results.dir, "integratedView"), showWarnings = TRUE)
+dir.create(file.path(results.dir, "integratedView/DaTSCAN"), showWarnings = TRUE)
+
+setwd(paste0(results.dir, "integratedView/DaTSCAN"))
+
 grace.fits <- grace(id = grace.df$id,
                     argvals = grace.df$argvals,
                     y = grace.df$Y,
                     outcome = grace.df$outcome,
                     group = grace.df$group,
-                    plots = FALSE)
+                    plots = T)
 
-# store grace results
-for (f in features)
-{
-  out.name <- paste(datscan.dir, f, "_grace.csv", sep = " ")
-  write.csv(x = grace.fits$fits[[f]]$subset, file = out.name, quote = FALSE, row.names = FALSE) 
+setwd("../")
+
+# store grace table results
+for (f in features){
+  out.name <- paste0(f, "_grace.csv")
+  path = paste0(genotyping.dir, grace.dir, "/", out.name)
+  write.csv(x = grace.fits$fits[[f]]$subset, file = path, quote = FALSE, row.names = FALSE) 
 }
-

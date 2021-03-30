@@ -28,36 +28,41 @@ if(!require("qqman", character.only = TRUE))
   }
 }
 
-
 # load required packages
 suppressPackageStartupMessages(library(qqman))
+source("Manhattan_plot.R") # contains the function to generate the Manhattan plot
 
-genotyping.dir <- "../../data/genotyping/"
-results.dir <-"../../results/individualView/DaTSCAN/"
-phenotype.prefix <- paste(genotyping.dir, "indview_datscan_", sep = "")
+genotyping.dir <- "../../data/genotyping/Individual_View_Datscan/"
+results.dir    <- "../../results/individualView/DaTSCAN/"
+phenotype.prefix <- paste(genotyping.dir, "indview_datscan.", sep = "")
 
 # phenotypes
-phenotypes = c("CAUDATE_L","CAUDATE_R","PUTAMEN_R","PUTAMEN_L")
+phenotypes = c("CAUDATE_R","CAUDATE_L","PUTAMEN_R","PUTAMEN_L")
 
 # compute manhanttan and qq plots for each DaTSCAN feature
 for (pheno in phenotypes){
-  snp.pheno.ass = read.csv(
-    paste(paste(phenotype.prefix, pheno, sep = ""), ".csv", sep = "")
+  snp.pheno.ass = read.table(
+    paste(paste(phenotype.prefix, pheno, sep = ""), ".assoc.linear", sep = ""),
+    header = TRUE
   )
   
-  out.fn <- paste(paste(results.dir, pheno, sep = ""), ".png", sep = "")
-  png(out.fn, width = 24, height = 16, units = "in", res = 275) 
-  
-  par(mfrow=c(2,1)) 
-  
+  out.fn <- paste(paste(results.dir, pheno, sep = ""), "_Manhattan.png", sep = "")
+  out.fn.qq <- paste(paste(results.dir, pheno, sep = ""), "_QQ.png", sep = "")
+
   # manhanttan plot
-  manhattan(
-    snp.pheno.ass, main = sprintf("%s - Manhanttan plot", pheno), chr="CHR", bp="BP", p="P",
-    ylim = c(0, 8), col = c("blue4", "orange3"), annotatePval = 0.005
-  )
+  ManhattanGenerator(snp.pheno.ass,out.fn,pheno)
   
   # qq plot
+  png(out.fn.qq, width = 24, height = 16, units = "in", res = 275) 
   qq(snp.pheno.ass$P, main = sprintf("%s - QQ plot", pheno), col = "blue4")
-  
   dev.off()  # close ostream
 }
+
+
+
+
+
+
+
+
+

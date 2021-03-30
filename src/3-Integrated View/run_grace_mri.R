@@ -74,45 +74,53 @@ if(!require("tidyverse", character.only = TRUE))
 }
 
 # load the required packages
-library(devtools)
-library(grace) 
-library(fda) 
-library(mvtnorm) 
-library(tidyverse)
-library(ggplot2) 
-
+suppressPackageStartupMessages(library(devtools))
+suppressPackageStartupMessages(library(grace))
+suppressPackageStartupMessages(library(fda))
+suppressPackageStartupMessages(library(mvtnorm))
+suppressPackageStartupMessages(library(tidyverse))
 
 options(stringsAsFactors = FALSE) 
 
-# load DATScan measures
-mri.dir <- "../../data/imaging/MRI/"
-mri <- read.csv(paste(mri.dir, "MRIFeatures_eu_woswedd.csv", sep = ""))
-mri <- mri[, c(1,3:267)]
-mri <- mri[complete.cases(mri),]
+genotyping.dir = "../../data/genotyping/"
+indview.mri    = paste0(genotyping.dir, "Individual_View_MRI/")
+grace.dir      = "Integrated_View_MRI"
+results.dir    = "../../results/"
+
+# create the folder that will contains the results
+dir.create(file.path(genotyping.dir, grace.dir), showWarnings = TRUE)
 
 # load phenotype information (computed during prev step)
-pheno.fn <- "../../data/genotyping/phenotype_mri.txt"
-pheno <- read.csv(pheno.fn, sep = " ")
+pheno = read.csv(paste0(indview.mri,"phenotype_mri.txt"), sep = " ")
+
+# to run properly grace we need to remove all NA values in the phenotype file
+pheno = pheno[complete.cases(pheno),]
 
 # load covariate information (computed during prev step)
-covar.fn = "../../data/genotyping/covariate_mri.txt"
-covar <- read.csv(covar.fn, sep = "\t")
+covar = read.csv(paste0(indview.mri,"covariate_mri.txt"), sep = " ")
+
+# we need to remove the patients also in the covariate file to have the same patients set
+covar = covar[covar$FID %in% pheno$FID,]
 
 # create df for grace run
-features <- colnames(mri)[2:length(colnames(mri))]
-# for (f in features)
-# {
-#   mri[f] <- (mri[[f]] - min(mri[[f]], na.rm = T)) / sd(mri[[f]], na.rm = T) 
-# }
+features <- colnames(pheno)[4:length(colnames(pheno))]
+
+times = length(features)
+
 grace.df <- data.frame(
-  id = rep(mri$PATNO, each = 265),  # 265 features
-  argvals = rep(covar[covar$IID %in% mri$PATNO,]$AGE, each = 265),
-  group = as.factor(rep(pheno[pheno$IID %in% mri$PATNO,]$ENROLL_CAT, each = 265)),
-  Y = as.numeric(as.list(t(mri[, 2:ncol(mri)]))),
-  outcome = rep(features, length(mri$PATNO))
+  id = rep(pheno$FID, each = times),      # 6 features
+  argvals = rep(covar$AGE, each = times),
+  group = as.factor(rep(pheno$ENROLL_CAT, each = times)),
+  Y = as.numeric(as.list(t(pheno[, features]))),
+  outcome = rep(features, length(pheno$FID))
 )
 
-# run grace
+# before run grace is suggested to move to another folder in order to store the resulting plot
+dir.create(file.path(results.dir, "integratedView"), showWarnings = TRUE)
+dir.create(file.path(results.dir, "integratedView/MRI"), showWarnings = TRUE)
+
+setwd(paste0(results.dir, "integratedView/MRI"))
+
 grace.fits <- grace(id = grace.df$id,
                     argvals = grace.df$argvals,
                     y = grace.df$Y,
@@ -120,10 +128,11 @@ grace.fits <- grace(id = grace.df$id,
                     group = grace.df$group,
                     plots = T)
 
-# store grace results
-for (f in features)
-{
-  out.name <- paste(datscan.dir, f, "_grace.csv", sep = " ")
-  write.csv(x = grace.fits$fits[[f]]$subset, file = out.name, quote = FALSE, row.names = FALSE) 
-}
+setwd("../")
 
+# store grace table results
+for (f in features){
+  out.name <- paste0(f, "_grace.csv")
+  path = paste0(genotyping.dir, grace.dir, "/", out.name)
+  write.csv(x = grace.fits$fits[[f]]$subset, file = path, quote = FALSE, row.names = FALSE) 
+}
