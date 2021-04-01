@@ -1,4 +1,36 @@
 # function to create the Manhattan Plot
+# R packages required to run the script:
+# - tidyverse
+# - ggplot2
+# - ggrepel
+
+if(!require("tidyverse", character.only = TRUE))
+{
+  install.packages("tidyverse")
+  if(!require("tidyverse", character.only = TRUE))
+  {
+    stop("tidyverse package not found")
+  }
+}
+
+if(!require("ggplot2", character.only = TRUE))
+{
+  install.packages("ggplot2")
+  if(!require("ggplot2", character.only = TRUE))
+  {
+    stop("ggplot2 package not found")
+  }
+}
+
+if(!require("ggrepel", character.only = TRUE))
+{
+  install.packages("ggrepel")
+  if(!require("ggrepel", character.only = TRUE))
+  {
+    stop("ggrepel package not found")
+  }
+}
+
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(ggplot2))
 suppressPackageStartupMessages(library(ggrepel))
