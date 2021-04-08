@@ -121,7 +121,13 @@ if( sum(substr(snps$SNP.rsid,1,2) != "rs") ){
 snps = unique(snps$SNP.rsid)
 
 # retrieve snps information using NCBI's refSNP
-snps.to.gene = ncbi_snp_query(snps)
+snps.to.gene = data.frame()
+time = 0.2         # is necessary to avoid the interruption to ncbi due to the several requests
+for (i in snps){
+  tmp = ncbi_snp_query(i)
+  snps.to.gene = rbind(snps.to.gene, tmp)  
+  Sys.sleep(time)
+}
 
 # add NA values in the empty cell of Gene to have a consistent data frame
 snps.to.gene$gene = gsub("^$|^ $", NA, snps.to.gene$gene)
