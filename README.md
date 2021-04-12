@@ -12,9 +12,9 @@ The data analyzed comes from the Parkinson’s Progression Marker Initiative (PP
 
 To test this workflow we used genetic (genotyping and transcriptomic) and imaging data (DaTscan and MRI) avaiable at PPMI data portal.
 
-* **Genotyping data** consists of a set of DNA sequence polymorphism (SNPs and indels), available in two datasets: ImmunoChip and NeuroX. Both of them are in the plink binary format
-*  **Transcriptmoic data** consists of different counts data per patients (.txt file)
-*  **Imaging data** consists of two set of different images: DaTscan measured the amount of dopamine transporter in four regions of the brain striatum (right/left caudate and putamen), and MRI, containing the morphological information of each brain region. Both of these file are in the csv format. The file related to the DaTscan data is just avaiable from PPMI. The MRI was produced after processing the imaging avaiable. 
+* **Genotyping data** consists of a set of DNA sequence polymorphism (SNPs and indels), available in two datasets: ImmunoChip and NeuroX. Both of them are in the plink binary format.
+*  **Transcriptmoic data** consists of different counts data per patient (.txt file).
+*  **Imaging data** consists of two set of different images: DaTscan, measuring the amount of dopamine transporter in four regions of the brain striatum (right/left caudate and putamen), and MRI, containing the morphological information of each brain region. Both of these file are in the csv format. The file related to the DaTscan data is just avaiable from PPMI, instead the one of the MRI was produced after processing the imaging. 
 
 ## Contents
 
