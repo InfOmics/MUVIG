@@ -1,4 +1,4 @@
-# ImaginGeneticsPD
+# MUVIG: MUlti View on Imagin Genetics
 
 Imaging genetics workflow to find Parkinson's Disease potential genetic biomarkers, combining genetics, transcriptomics and imaging data. Above is presented the workflow of this project.
 
@@ -7,6 +7,14 @@ Imaging genetics workflow to find Parkinson's Disease potential genetic biomarke
 ## Overview
 
 The data analyzed comes from the Parkinson’s Progression Marker Initiative (PPMI: [link](https://www.ppmi-info.org)). It contains the most complete and comprehensive collection of PD-related data. PPMI aims to identify new potential biomarkers of progression for PD through longitudinal studies, which use and correlate data from different sources, in order to enhance the development of new therapies and treatments. PPMI is sponsored by the Michael J. Fox Foundation for Parkinson’s Research, and gathers a huge amount of imaging, genetic and neurobehavioral data collected by many research centers in North America, Europe, Israel and Australia. Among the available genetic data in PPMI, genotyping and transcriptomic data provide a comprehensive perspective of which roles play in PD genetic variation, genes expression and gene-gene interactions.
+
+## Data
+
+To test this workflow we used genetic (genotyping and transcriptomic) and imaging data (DaTscan and MRI) avaiable at PPMI data portal.
+
+* **Genotyping data** consists of a set of DNA sequence polymorphism (SNPs and indels), available in two datasets: ImmunoChip and NeuroX. Both of them are in the plink binary format
+*  **Transcriptmoic data** consists of different counts data per patients (.txt file)
+*  **Imaging data** consists of two set of different images: DaTscan measured the amount of dopamine transporter in four regions of the brain striatum (right/left caudate and putamen), and MRI, containing the morphological information of each brain region. Both of these file are in the csv format. The file related to the DaTscan data is just avaiable from PPMI. The MRI was produced after processing the imaging avaiable. 
 
 ## Contents
 
