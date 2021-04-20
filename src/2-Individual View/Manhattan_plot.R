@@ -31,9 +31,9 @@ if(!require("ggrepel", character.only = TRUE))
   }
 }
 
-suppressPackageStartupMessages(library(tidyverse))
-suppressPackageStartupMessages(library(ggplot2))
-suppressPackageStartupMessages(library(ggrepel))
+suppressPackageStartupMessages( c( library(tidyverse),
+                                   library(ggplot2),
+                                   library(ggrepel) ))
 
 ManhattanGenerator <- function(gwasResults,path,pheno){
   
