@@ -74,11 +74,11 @@ if(!require("tidyverse", character.only = TRUE))
 }
 
 # load the required packages
-suppressPackageStartupMessages(library(devtools))
-suppressPackageStartupMessages(library(grace))
-suppressPackageStartupMessages(library(fda))
-suppressPackageStartupMessages(library(mvtnorm))
-suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages( c( library(devtools),
+                                   library(grace),
+                                   library(fda),
+                                   library(mvtnorm),
+                                   library(tidyverse) ))
 
 options(stringsAsFactors = FALSE) 
 
