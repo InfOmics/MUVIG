@@ -52,9 +52,9 @@ if (!require("assertthat", character.only = TRUE))
 
 
 # load the required packages
-suppressPackageStartupMessages(library(tidyverse))
-suppressPackageStartupMessages(library(dplyr))
-suppressPackageStartupMessages(library(assertthat))
+suppressPackageStartupMessages( c( library(tidyverse),
+                                   library(dplyr),
+                                   library(assertthat) ))
 
 
 # function to compute the p-value of a linear model 
