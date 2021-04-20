@@ -99,13 +99,12 @@ if(!require("rWikiPathways", character.only = TRUE))
 }
 
 # load the required packages
-suppressPackageStartupMessages(library(rsnps))
-suppressPackageStartupMessages(library(httr))
-suppressPackageStartupMessages(library(BiocManager))
-suppressPackageStartupMessages(library(clusterProfiler))
-suppressPackageStartupMessages(library(org.Hs.eg.db))
-suppressPackageStartupMessages(library(rWikiPathways))
-
+suppressPackageStartupMessages(c( library(rsnps),
+                                  library(httr),
+                                  library(BiocManager),
+                                  library(clusterProfiler),
+                                  library(org.Hs.eg.db),
+                                  library(rWikiPathways) ))
 
 results.dir = "../../results/"
 snps.dir    = "../../Supplementary/" 
