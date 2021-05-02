@@ -186,7 +186,7 @@ x$genes <- genes # adding the gene name to the DGEList object since now we have 
   # Determine which genes have sufficiently large counts to be retained in a statistical analysis
   keep.exprs <- rowSums(cpm(x)>0.4) >= 5
   
-  keep.exprs <- filterByExpr(x)
+  keep.exprs <- filterByExpr(x, group = x$samples$group)
   x_filtered <- x[keep.exprs,]
   
   # create some useful plot before and after the filtering
