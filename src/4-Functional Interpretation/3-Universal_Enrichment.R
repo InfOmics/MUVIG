@@ -57,35 +57,46 @@ suppressPackageStartupMessages( c( library(clusterProfiler),
                                    library(tibble),
                                    library(org.Hs.eg.db) ))
 
-# download the data from  WikiPathways 
-wpgmtfile = system.file("extdata/wikipathways-20180810-gmt-Homo_sapiens.gmt", 
-                        package="clusterProfiler")
+# download the last release of the GMT file from  WikiPathways
+# here: https://wikipathways-data.wmcloud.org/current/gmt/
+
+wpgmtfile = ("wikipathways-20210410-gmt-Homo_sapiens.gmt")
 wp2gene   = read.gmt(wpgmtfile)
 wp2gene   = wp2gene %>% tidyr::separate(term, c("name","version","wpid","org"), "%")
 wpid2gene = wp2gene %>% dplyr::select(wpid, gene) 
 wpid2name = wp2gene %>% dplyr::select(wpid, name) 
 
 # list all the resulting tables
-files = list.files("Results")
+result_fn = "Results_3/"
+files = list.files(result_fn, pattern="*.csv") 
+
+# create the dir that will contains the Universal Enrichment Results 
+dir.create(paste0(result_fn,"UEA"))
+uea_fn    = paste0(result_fn,"UEA/GSEA/")
+uea_fn_en = paste0(result_fn,"UEA/Enrich/")
+dir.create(uea_fn)
+dir.create(uea_fn_en)
 
 for (i in files){
   name  = gsub("\\..*","", substring(i,7) )
-  GeneTable = read.csv( paste("Results/", i, sep="") )[,c(1:4)]
-  
+  GeneTable = read.csv( paste0(result_fn, i) )[,c(1:4)]
   # prepare input for GSEA function
-  geneList = data.frame(GeneTable$ENTREZID, 2^GeneTable$logFC)
-  
+  geneList = data.frame(GeneTable$ENTREZID, GeneTable$logFC)
   geneList = na.omit(geneList)
   geneList = geneList[!duplicated(geneList$GeneTable.ENTREZID),]
-  geneList <- sort(deframe(geneList), decreasing = T)
-  
+  geneList = sort(deframe(geneList), decreasing = T)
+  genes    = names(geneList)[abs(2^geneList) > 1] # computing the FC
   
   # computing gene set enrichment analysis
-  ewp <- GSEA(geneList, TERM2GENE = wpid2gene, TERM2NAME = wpid2name, verbose=FALSE,
-              pvalueCutoff = 1, scoreType="pos") 
+  ewp     <- GSEA(geneList,  TERM2GENE = wpid2gene, TERM2NAME = wpid2name, verbose=F, eps=0)
+  ewp_en  <- enricher(genes, TERM2GENE = wpid2gene, TERM2NAME = wpid2name) 
+  
   # convert the gene IDs to gene symbols
-  ewpSymbol <- setReadable(ewp, org.Hs.eg.db, keyType = "ENTREZID")
+  ewpSymbol    <- setReadable(ewp, org.Hs.eg.db,    keyType = "ENTREZID")
+  ewp_enSymbol <- setReadable(ewp_en, org.Hs.eg.db, keyType = "ENTREZID")
   
   write.table(ewpSymbol@result, 
-            paste("UEA/", name ,".txt",sep=""), quote=F, row.names = F,sep=";")
+            paste0(uea_fn,"Pathway_", name ,".txt"), quote=F, row.names = F,sep="\t")
+  write.table(ewp_enSymbol@result[ewp_enSymbol@result$p.adjust<=0.05,], 
+             paste0(uea_fn_en,"Pathway_Enrich_", name ,".txt"), quote=F, row.names = F,sep="\t")
 }
