@@ -68,12 +68,12 @@ if(!require("AnnotationDbi", character.only = TRUE))
   }
 }
 
-if(!require("AnnotationHub", character.only = TRUE))
+if(!require("EnsDb.Hsapiens.v75", character.only = TRUE))
 {
-  BiocManager::install("AnnotationHub")
-  if(!require("AnnotationHub", character.only = TRUE))
+  BiocManager::install("EnsDb.Hsapiens.v75")
+  if(!require("EnsDb.Hsapiens.v75", character.only = TRUE))
   {
-    stop("AnnotationHub package not found")
+    stop("EnsDb.Hsapiens.v75 package not found")
   }
 }  
  
@@ -93,7 +93,7 @@ suppressPackageStartupMessages(c(
                                   library(BiocParallel),
                                   library(tidyverse),
                                   library(AnnotationDbi),
-                                  library(AnnotationHub),
+                                  library(EnsDb.Hsapiens.v75),
                                   library(RColorBrewer),
                                   require('gtools') ))
 
@@ -155,10 +155,7 @@ geneid <- rownames(x)
 geneid <- gsub("\\..*","", geneid) # removing the dot (version) after the gene name
 
 # convert the gene ensemble into entrezid and symbol
-ah <- AnnotationHub()
-# retrieve the latest version of EnsDb
-ens   = query(ah, c("EnsDb", "Hsapiens", "103"))[[1]]
-genes = select(ens, key=geneid, columns=c("ENTREZID", "SYMBOL"), keytype="GENEID")
+genes = select(EnsDb.Hsapiens.v75, key=geneid, columns=c("ENTREZID", "SYMBOL"), keytype="GENEID")
 # As with any gene ID, Entrez gene IDs may not map one-to-one to the gene information of interest. 
 # It is important to check for duplicated gene IDs
 genes <- genes[!duplicated(genes$GENEID),] # removing duplicates
@@ -184,8 +181,6 @@ x$genes <- genes # adding the gene name to the DGEList object since now we have 
   # We are lucky because only the 1.6% of genes in this dataset have zero counts across all samples
 
   # Determine which genes have sufficiently large counts to be retained in a statistical analysis
-  keep.exprs <- rowSums(cpm(x)>0.4) >= 5
-  
   keep.exprs <- filterByExpr(x, group = x$samples$group)
   x_filtered <- x[keep.exprs,]
   
@@ -198,9 +193,12 @@ x$genes <- genes # adding the gene name to the DGEList object since now we have 
   lcpm.cutoff <- log2(10/M + 2/L)
   
   nsamples <- ncol(x)
-  col <- brewer.pal(nsamples, "Paired")
+  col      <- brewer.pal(nsamples, "Paired")
+  lcpm     <- cpm(x, log=TRUE)
+  lcpm_fil <- cpm(x_filtered, log=TRUE)
   
   par(mfrow=c(1,2))
+  
   plot(density(lcpm[,1]), col=col[1], lwd=2, ylim=c(0,0.26), las=2, main="", xlab="")
   title(main="A. Raw data", xlab="Log-cpm")
   abline(v=lcpm.cutoff, lty=3)
@@ -208,12 +206,12 @@ x$genes <- genes # adding the gene name to the DGEList object since now we have 
     den <- density(lcpm[,i])
     lines(den$x, den$y, col=col[i], lwd=2)
   }
-  lcpm <- cpm(x_filtered, log=TRUE)
-  plot(density(lcpm[,1]), col=col[1], lwd=2, ylim=c(0,0.26), las=2, main="", xlab="")
+  
+  plot(density(lcpm_fil[,1]), col=col[1], lwd=2, ylim=c(0,0.26), las=2, main="", xlab="")
   title(main="B. Filtered data", xlab="Log-cpm")
   abline(v=lcpm.cutoff, lty=3)
   for (i in 2:nsamples){
-    den <- density(lcpm[,i])
+    den <- density(lcpm_fil[,i])
     lines(den$x, den$y, col=col[i], lwd=2)
   }
 
