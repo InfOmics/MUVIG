@@ -149,9 +149,15 @@ dds <- dds[keep,]
 
 # normalize counts
 vsd <- vst(dds, blind = F)
+p <- plotPCA(vsd, intgroup = "gen", returnData = F)
+p + geom_label(aes(label = colnames(dds))) +
+  ggtitle("Gender")  # sex creates considerable batch effect
 
-# sex creates considerable batch effect
-assay(vsd) <- limma::removeBatchEffect(assay(vsd), vsd$gen)  # correct to remove sex batch effect
+# correct to remove sex batch effect
+assay(vsd) <- limma::removeBatchEffect(assay(vsd), vsd$gen) 
+p <- plotPCA(vsd, intgroup = "gen", returnData = F)
+p + geom_label(aes(label = colnames(dds))) +
+  ggtitle("Gender")
 
 # plot variability via PCA
 p <- plotPCA(vsd, intgroup = "ENROLL_CAT", returnData = F)
