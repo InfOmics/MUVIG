@@ -20,7 +20,6 @@
 #   - DESeq2
 #   - ggplot2
 #   - limma
-#   - clusterProfiler
 #   - fgsea
 #   - org.Hs.eg.db
 #   - ReactomePA
@@ -58,15 +57,6 @@ if(!require("limma", character.only = TRUE))
   if(!require("limma", character.only = TRUE))
   {
     stop("limma package not found")
-  }
-}
-
-if(!require("clusterProfiler", character.only = TRUE))
-{
-  BiocManager::install("clusterProfiler")
-  if(!require("clusterProfiler", character.only = TRUE))
-  {
-    stop("clusterProfiler package not found")
   }
 }
 
@@ -197,23 +187,11 @@ entrez.ids <- entrez.ids[!is.na(entrez.ids$ENTREZID),]  # remove NAs
 results <- results[entrez.ids$ENSEMBL,]  # remove unmapped genes
 rownames(results) <- entrez.ids$ENTREZID
 
-# enrichment with clusterProfiler
+# enrichment with fgsea - reactome db
 lfc <- results$log2FoldChange
 names(lfc) <- rownames(results)
-lfc <- sort(lfc, decreasing = T)
-enr.clusterProfiler <- gsePathway(
-  geneList = lfc,
-  eps = 0
-)
-
-# subset to signifcant pathways (q-value < 0.05)
-enr.clusterProfiler@result <- enr.clusterProfiler@result[
-  enr.clusterProfiler@result$p.adjust < .05,
-]
-
-# enrichment with fgsea
 pathways <- reactomePathways(names(lfc))  # recover pathways with de genes
-enr.fgsea <- fgsea(
+enr.fgsea.reactome <- fgsea(
   pathways, 
   lfc,
   nPermSimple = 10000,
@@ -221,22 +199,34 @@ enr.fgsea <- fgsea(
   minSize = 10
 )
 
-# subset to signifcant pathways (q-value < 0.05)
-enr.fgsea <- enr.fgsea[enr.fgsea$padj < .05,]
+# subset to signifcant pathways (q-value < 0.1)
+enr.fgsea.reactome <- enr.fgsea.reactome[enr.fgsea.reactome$padj < .1,]
 
-# intersect signifcant pathways found by clusterProfiler and fgsea
-pathways.intersect <- intersect(
-  enr.fgsea$pathway,
-  enr.clusterProfiler@result@Description
+# store results
+fwrite(
+  as.data.frame(enr.fgsea.reactome),
+  "../data/RNA-seq-data/pathways-cond-reactome.tsv",
+  sep = "\t",
+  sep2 = c("", " ", "")
 )
-length(pathways.intersect)  # 99 signifcant pathways
 
-# store pathways
-write.table(
-  data.frame(Pathways = pathways.intersect),
-  file = "../data/RNA-seq-data/pathways-status.tsv",
-  row.names = F,
-  col.names = T,
-  quote = F,
-  sep = "\t"
+# enrichment with fgsea - kegg db
+pathways <- gmtPathways("../data/RNA-seq-data/GMT/c2.cp.kegg.v7.4.entrez.gmt")
+enr.fgsea.kegg <- fgsea(
+  pathways, 
+  lfc,
+  nPermSimple = 10000,
+  eps = 0,
+  minSize = 10
+)
+
+# subset to signifcant pathways (q-value < 0.1)
+enr.fgsea.kegg <- enr.fgsea.kegg[enr.fgsea.kegg$padj < .1,]
+
+# store results
+fwrite(
+  as.data.frame(enr.fgsea.kegg),
+  "../data/RNA-seq-data/pathways-cond-kegg.tsv",
+  sep = "\t",
+  sep2 = c("", " ", "")
 )
