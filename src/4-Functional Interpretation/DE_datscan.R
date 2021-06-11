@@ -5,8 +5,8 @@
 # Differential expression analysis on putamen and caudate dopamine uptake values.
 #
 # The below differential expression analysis test for genes showing a 
-# differential expression by DaTscan putamen values, showed by the individuals
-# participating to PPMI baseline RNA-seq.
+# differential expression by DaTscan putamen and caudate values, showed by the 
+# individuals participating to PPMI baseline RNA-seq.
 # 
 #
 # After the differential expression analysis we'll be carried out an enrichment
@@ -22,6 +22,7 @@
 #   - fgsea
 #   - org.Hs.eg.db
 #   - ReactomePA
+
 
 if(!require("BiocManager", character.only = TRUE))
 {
@@ -68,7 +69,7 @@ if(!require("fgsea", character.only = TRUE))
   }
 }
 
-if(!require("forg.Hs.eg.db", character.only = TRUE))
+if(!require("org.Hs.eg.db", character.only = TRUE))
 {
   BiocManager::install("org.Hs.eg.db")
   if(!require("org.Hs.eg.db", character.only = TRUE))
