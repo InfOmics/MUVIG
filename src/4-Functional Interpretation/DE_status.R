@@ -221,23 +221,4 @@ fwrite(
   sep2 = c("", " ", "")
 )
 
-# enrichment with fgsea - kegg db
-pathways <- gmtPathways("../data/RNA-seq-data/GMT/c2.cp.kegg.v7.4.entrez.gmt")
-enr.fgsea.kegg <- fgsea(
-  pathways, 
-  lfc,
-  nPermSimple = 10000,
-  eps = 0,
-  minSize = 10
-)
-
-# subset to signifcant pathways (q-value < 0.1)
-enr.fgsea.kegg <- enr.fgsea.kegg[enr.fgsea.kegg$padj < .1,]
-
-# store results
-fwrite(
-  as.data.frame(enr.fgsea.kegg),
-  "../data/RNA-seq-data/pathways-cond-kegg.tsv",
-  sep = "\t",
-  sep2 = c("", " ", "")
-)
+## -- add nbe -- ##
