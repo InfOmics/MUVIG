@@ -3,7 +3,7 @@
 # mriFeatureSelection.R
 #
 # The following R script computes the MRI brain morphological features 
-# more likely to separate healthy controls from Parkinson's Disease 
+# more likely to separate healthy controls (HCs) from Parkinson's Disease 
 # (PD) patients. 
 #
 # To evaluate predictive power of MRI features we compute the adjusted 
@@ -65,7 +65,7 @@ compute.lm <- function(feature)
         sep = ""
       )
     ),
-    data = mri.foi.bl
+    data = mri.ceu
   )
   
   p <- summary(fit)$coeff["ENROLL_CAT",4]
@@ -75,28 +75,28 @@ compute.lm <- function(feature)
 
 
 # retrieve data directory path
-data.dir <- "~/Desktop/MUVIG-main/data/"  # modify accordingly
+data.dir <- "../../data/"  
 
 # retrieve MRI imaging features
-mri.foi.bl <- read.csv(
-  paste(data.dir, "imaging/MRI/mriFeatures_foi_bl.csv", sep = ""),
+mri.ceu <- read.csv(
+  paste(data.dir, "patient_data/MRI_CEU.csv", sep = ""),
 )
 
 # load the enrolment cathegory information
-pat.info <- read.csv(
-  paste(data.dir, "patient_docs/Patient_Status.csv", sep = "")
+bl.data <- read.csv(
+  paste(data.dir, "patient_data/PPMI-baseline_ceu.csv", sep = "")
 ) 
-eu.pat.info <- pat.info[pat.info$PATNO %in% mri.foi.bl$PATNO,]
-if (!are_equal(nrow(eu.pat.info), nrow(mri.foi.bl)))
-  stop("wrong number of patients retrieved")
-mri.foi.bl$ENROLL_CAT <- ifelse(eu.pat.info$ENROLL_CAT == "PD", 2, 1)
+bl.mri.filt <- bl.data[bl.data$PATNO %in% mri.ceu$PATNO,]
+if (!are_equal(nrow(bl.mri.filt), nrow(mri.ceu)))
+  stop("wrong number of subjects retrieved")
+mri.ceu$ENROLL_CAT <- ifelse(bl.mri.filt$ENROLL_CAT == "PD", 2, 1)
 
 # initialize result report table
 features <- data.frame(
-  Name = colnames(mri.foi.bl)[6:(ncol(mri.foi.bl) - 1)],
-  p = rep(-1, length(colnames(mri.foi.bl)[6:(ncol(mri.foi.bl) - 1)])),
-  p.adj = rep(colnames(mri.foi.bl)[6:(ncol(mri.foi.bl) - 1)])
-  )
+  Name = colnames(mri.ceu)[6:(ncol(mri.ceu) - 1)],
+  p = rep(-1, length(colnames(mri.ceu)[6:(ncol(mri.ceu) - 1)])),
+  p.adj = rep(-1, length(colnames(mri.ceu)[6:(ncol(mri.ceu) - 1)]))
+)
 
 # compute lm p-values
 p <- sapply(as.list(as.character(features$Name)), compute.lm)
@@ -109,7 +109,7 @@ features <- features[order(features$p.adj),]
 # store the result in a file named mriFeatureRank.csv
 write.csv(
   features,
-  file = paste(data.dir, "imaging/MRI/mriFeaturesRank.csv", sep = ""),
+  file = paste(data.dir, "patient_data/mriFeaturesRank.csv", sep = ""),
   quote = FALSE,
   row.names = FALSE
 )

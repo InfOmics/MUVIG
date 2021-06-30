@@ -33,20 +33,20 @@ suppressPackageStartupMessages(library(RNOmni))
 mri.dir <- "../../data/patient_data/"
 
 # read the DaTSCAN 
-mri.ceu <- read.csv(
-  paste(mri.dir, "MRI_CEU_filt.csv", sep = "")
+mri.parahippo <- read.csv(
+  paste(mri.dir, "MRI_parahippo.csv", sep = "")
 )
 
 # normalize values with rank based inverse normal transform
-mri.ceu.norm <- mri.ceu
-mri.ceu.norm[,2:ncol(mri.ceu.norm)] <- apply(
-  mri.ceu.norm[,2:ncol(mri.ceu.norm)], 2, RankNorm
+mri.parahippo.norm <- mri.parahippo
+mri.parahippo.norm[,5:(ncol(mri.parahippo.norm) - 1)] <- apply(
+  mri.parahippo.norm[,5:(ncol(mri.parahippo.norm) - 1)], 2, RankNorm
 )
 
 # write the results
 write.csv(
-  mri.ceu.norm,
-  file = paste(mri.dir, "MRI_CEU_norm.csv", sep = ""),
+  mri.parahippo.norm,
+  file = paste(mri.dir, "MRI_parahippo_norm.csv", sep = ""),
   quote = FALSE,
   row.names = FALSE
 )
