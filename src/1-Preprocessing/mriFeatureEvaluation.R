@@ -79,12 +79,12 @@ data.dir <- "../../data/"
 
 # retrieve MRI imaging features
 mri.ceu <- read.csv(
-  paste(data.dir, "patient_data/MRI_CEU.csv", sep = ""),
+  paste(data.dir, "patients_data/MRI_CEU.csv", sep = ""),
 )
 
 # load the enrolment cathegory information
 bl.data <- read.csv(
-  paste(data.dir, "patient_data/PPMI-baseline_ceu.csv", sep = "")
+  paste(data.dir, "patients_data/PPMI-baseline_ceu.csv", sep = "")
 ) 
 bl.mri.filt <- bl.data[bl.data$PATNO %in% mri.ceu$PATNO,]
 if (!are_equal(nrow(bl.mri.filt), nrow(mri.ceu)))
@@ -109,7 +109,7 @@ features <- features[order(features$p.adj),]
 # store the result in a file named mriFeatureRank.csv
 write.csv(
   features,
-  file = paste(data.dir, "patient_data/mriFeaturesRank.csv", sep = ""),
+  file = paste(data.dir, "patients_data/mriFeaturesRank.csv", sep = ""),
   quote = FALSE,
   row.names = FALSE
 )

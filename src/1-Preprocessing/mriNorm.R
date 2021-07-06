@@ -30,7 +30,7 @@ if(!require("RNOmni", character.only = TRUE))
 # load the required packages
 suppressPackageStartupMessages(library(RNOmni))
 
-mri.dir <- "../../data/patient_data/"
+mri.dir <- "../../data/patients_data/"
 
 # read the DaTSCAN 
 mri.parahippo <- read.csv(

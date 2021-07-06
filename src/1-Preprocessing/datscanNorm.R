@@ -18,7 +18,7 @@
 # ranges of values (putamen != caudate range).
 #
 # To avoid possible errors and biases due to the different value ranges 
-# when associating SNP with phenotypes (PD in our study), we need to
+# when associating SNP with phenotypes, we need to
 # normalize the values.
 #
 ########################################################################
@@ -39,23 +39,23 @@ if(!require("RNOmni", character.only = TRUE))
 # load the required packages
 suppressPackageStartupMessages(library(RNOmni))
 
-datscan.dir <- "../../data/imaging/DaTSCAN/"
+datscan.dir <- "../../data/patients_data/"
 
 # read the DaTSCAN 
-datscan.eu <- read.csv(
-  paste(datscan.dir, "DATScan_Analysis_eu_fv.csv", sep = "")
+datscan.ceu <- read.csv(
+  paste(datscan.dir, "DaTscan_CEU_filt.csv", sep = "")
 )
 
 # normalize values with rank based inverse normal transform
-datscan.eu.norm <- datscan.eu
-datscan.eu.norm[,4:ncol(datscan.eu.norm)] <- apply(
-  datscan.eu.norm[,4:ncol(datscan.eu.norm)], 2, RankNorm
+datscan.ceu.norm <- datscan.ceu
+datscan.ceu.norm[,3:ncol(datscan.ceu.norm)] <- apply(
+  datscan.ceu.norm[,3:ncol(datscan.ceu.norm)], 2, RankNorm
 )
 
 # write the results
 write.csv(
-  datscan.eu.norm,
-  file = paste(datscan.dir, "DATScan_Analysis_eu_fv_norm.csv", sep = ""),
+  datscan.ceu.norm,
+  file = paste(datscan.dir, "DaTscan_CEU_norm.csv", sep = ""),
   quote = FALSE,
   row.names = FALSE
 )
