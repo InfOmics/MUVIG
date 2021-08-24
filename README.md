@@ -50,10 +50,9 @@ install_bitbucket("mdonohue/grace")
 pip install scipy.stats matplotlib_venn pandas matplotlib.pyplot seaborn math
 ```
 
-### The following **tools**:
+### The following **tool**:
 
 * **Tates**: avaiable at [Tates download](https://ctg.cncr.nl/software/tates)
-* **Grace**: avaiable at [Grace download](https://bitbucket.org/mdonohue/grace/src/master/)
 
 ## Input example
 
